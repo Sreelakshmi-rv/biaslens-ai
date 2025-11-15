@@ -218,20 +218,6 @@ class BiasLensApp:
             else:
                 st.info("No obvious sensitive attributes detected. You'll be able to select manually in the analysis tab.")
         
-        # Data Quality Assessment
-        with st.expander("📈 Data Quality Assessment"):
-            quality = profile['quality_assessment']
-            st.metric("Quality Score", f"{quality['quality_score']}/100")
-            
-            if quality['issues_found']:
-                st.warning("⚠️ Issues Found:")
-                for issue in quality['issues_found']:
-                    st.write(f"- {issue}")
-            
-            if quality['recommendations']:
-                st.info("💡 Recommendations:")
-                for rec in quality['recommendations']:
-                    st.write(f"- {rec}")
         
         # LLM Insights - CORRECTED INDENTATION
         with st.expander("🤖 AI Insights"):
