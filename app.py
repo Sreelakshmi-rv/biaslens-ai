@@ -94,11 +94,11 @@ class BiasLensApp:
         
         # Main content area
         tab1, tab2, tab3, tab4, tab5 = st.tabs([
-            "📁 Data Upload", 
-            "🔧 Data Cleaning", 
-            "📊 Bias Analysis",
-            "📋 Reports", 
-            "💬 Ask Questions"
+            "Data Upload", 
+            "Data Cleaning", 
+            "Bias Analysis",
+            "Reports", 
+            "Ask Questions"
         ])
         
         with tab1:
@@ -412,7 +412,6 @@ class BiasLensApp:
             st.success(" Bias analysis completed! Move to the 'Reports' tab to generate comprehensive fairness reports.")
     
     def render_reports(self):
-        st.header(" Generated Reports")
         
         if not st.session_state.get('analysis_complete', False):
             st.warning("Please complete the bias analysis first.")
@@ -441,8 +440,8 @@ class BiasLensApp:
             )
         
         # Generate reports
-        if st.button("📄 Generate Fairness Reports", type="primary"):
-            with st.spinner("🤖 Report Generation Agent is creating comprehensive reports..."):
+        if st.button("Generate Fairness Reports", type="primary"):
+            with st.spinner("Report Generation Agent is creating comprehensive reports..."):
                 reporter_agent = st.session_state.agents['reporter']
                 report_result = reporter_agent.execute(
                     data_context={
@@ -524,7 +523,7 @@ class BiasLensApp:
                         st.markdown("### Recommended Bias Mitigation Strategies")
                         st.markdown(available_reports['mitigation_recommendations'])
             
-            st.success("🎉 All reports generated! Move to the 'Ask Questions' tab for interactive analysis.")
+            st.success("All reports generated! Move to the 'Ask Questions' tab for interactive analysis.")
     
     def render_chat_interface(self):
         st.header("Ask Questions About Your Analysis")
@@ -553,8 +552,6 @@ class BiasLensApp:
                 "What are the next steps after this analysis?"
             ]
         
-        # Display conversation history
-        st.subheader("Conversation")
         
         if not st.session_state.chat_history:
             st.info("Start by asking a question or clicking a suggested question below!")
