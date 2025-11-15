@@ -187,7 +187,7 @@ class BiasLensApp:
             basic_info = profile['basic_info']
             col1, col2, col3, col4 = st.columns(4)
             with col1:
-                st.metric("Shape", f"{basic_info['shape'][0]} × {basic_info['shape'][1']}")
+                st.metric("Shape", f"{basic_info['shape'][0]} × {basic_info['shape'][1]}")
             with col2:
                 st.metric("Memory", basic_info['memory_usage'])
             with col3:
