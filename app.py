@@ -22,12 +22,11 @@ class BiasLensApp:
         """Configure Streamlit page settings"""
         st.set_page_config(
             page_title="BiasLens - AI Fairness Analysis",
-            page_icon="🔍",
             layout="wide",
             initial_sidebar_state="expanded"
         )
         
-        st.title("🔍 BiasLens")
+        st.title("BiasLens")
         st.markdown("### AI-Powered Fairness Analysis Platform")
     
     def initialize_agents(self):
@@ -59,7 +58,7 @@ class BiasLensApp:
     def render_sidebar(self):
         """Render sidebar with progress and info"""
         with st.sidebar:
-            st.header("🔍 Analysis Progress")
+            st.header("Analysis Progress")
             
             steps = [
                 "1. Data Upload & Profiling",
