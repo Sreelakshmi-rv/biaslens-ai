@@ -239,13 +239,6 @@ class BiasLensApp:
         
         st.info("Data Cleaning Agent will prepare your data for bias analysis")
         
-        # Show current data info
-        st.subheader("Current Data Status")
-        col1, col2 = st.columns(2)
-        with col1:
-            st.metric("Original Data", "Ready" if st.session_state.raw_data is not None else "Not loaded")
-        with col2:
-            st.metric("Cleaned Data", "Ready" if st.session_state.cleaned_data is not None else "Not processed")
         
         if st.button("Run Data Cleaning", type="primary"):
             with st.spinner("Data Cleaning Agent is preparing your data..."):
