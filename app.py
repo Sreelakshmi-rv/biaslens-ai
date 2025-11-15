@@ -187,7 +187,7 @@ class BiasLensApp:
             basic_info = profile['basic_info']
             col1, col2, col3, col4 = st.columns(4)
             with col1:
-                st.metric("Shape", f"{basic_info['shape'][0]} × {basic_info['shape'][1]}")
+                st.metric("Shape", f"{basic_info['shape'][0]} × {basic_info['shape'][1']}")
             with col2:
                 st.metric("Memory", basic_info['memory_usage'])
             with col3:
@@ -218,6 +218,7 @@ class BiasLensApp:
             else:
                 st.info("No obvious sensitive attributes detected. You'll be able to select manually in the analysis tab.")
         
+        # NOTE: Data Quality Assessment removed as requested by user
         
         # LLM Insights - CORRECTED INDENTATION
         with st.expander("🤖 AI Insights"):
@@ -240,14 +241,7 @@ class BiasLensApp:
         
         st.info("Data Cleaning Agent will prepare your data for bias analysis")
         
-        # Show current data info
-        st.subheader("Current Data Status")
-        col1, col2 = st.columns(2)
-        with col1:
-            st.metric("Original Data", "Ready" if st.session_state.raw_data is not None else "Not loaded")
-        with col2:
-            st.metric("Cleaned Data", "Ready" if st.session_state.cleaned_data is not None else "Not processed")
-        
+        # Only keep the Run Data Cleaning button (removed Current Data Status metrics)
         if st.button("🔄 Run Data Cleaning", type="primary"):
             with st.spinner("🤖 Data Cleaning Agent is preparing your data..."):
                 cleaner_agent = st.session_state.agents['cleaner']
@@ -498,7 +492,8 @@ class BiasLensApp:
                 if report_type == "Comprehensive Report":
                     report_content = available_reports.get('comprehensive_report', 'Report not generated yet.')
                     st.markdown("### Comprehensive Fairness Analysis Report")
-                    st.markdown(report_content)
+                    # use a large text_area to prevent truncation/cut-off mid-sentence
+                    st.text_area("Report Content", value=report_content, height=400)
                     
                     # Download button for comprehensive report
                     st.download_button(
@@ -511,7 +506,7 @@ class BiasLensApp:
                 elif report_type == "Technical Report":
                     report_content = available_reports.get('technical_report', 'Report not generated yet.')
                     st.markdown("### Technical Report")
-                    st.markdown(report_content)
+                    st.text_area("Report Content", value=report_content, height=400)
                     
                     # Download button for technical report
                     st.download_button(
@@ -524,7 +519,7 @@ class BiasLensApp:
                 elif report_type == "Executive Summary":
                     report_content = available_reports.get('executive_summary', 'Report not generated yet.')
                     st.markdown("### Executive Summary")
-                    st.markdown(report_content)
+                    st.text_area("Report Content", value=report_content, height=400)
                     
                     # Download button for executive summary
                     st.download_button(
@@ -544,13 +539,7 @@ class BiasLensApp:
             st.success("🎉 All reports generated! Move to the 'Ask Questions' tab for interactive analysis.")
     
     def render_chat_interface(self):
-        st.header("💬 Ask Questions About Your Analysis")
-        
-        if not st.session_state.get('analysis_complete', False):
-            st.warning("⚠️ Please complete the analysis first to ask questions.")
-            return
-        
-        st.info("Ask me anything about your fairness analysis, models, bias metrics, or recommendations!")
+        # Top header and intro removed as requested
         
         # Initialize chat history in session state
         if 'chat_history' not in st.session_state:
@@ -652,26 +641,7 @@ class BiasLensApp:
             st.session_state.chat_history = []
             st.rerun()
         
-        # Show analysis context reminder
-        with st.expander("📊 Current Analysis Context"):
-            if st.session_state.analysis_result:
-                result = st.session_state.analysis_result
-                best_model = result.get('best_model', 'Unknown')
-                bias_detected = result.get('bias_detected', False)
-                
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.metric("Best Model", best_model.replace('_', ' ').title())
-                with col2:
-                    st.metric("Bias Detected", "🚨 Yes" if bias_detected else "✅ No")
-                
-                st.write("**Available Information:**")
-                st.write("✅ Model performance metrics")
-                st.write("✅ Fairness analysis results") 
-                st.write("✅ Bias detection findings")
-                st.write("✅ AI insights and recommendations")
-            else:
-                st.info("No analysis context available. Complete the bias analysis first.")
+        # Current Analysis Context removed as requested
 
     def _handle_suggested_question(self, question):
         """Handle suggested question selection"""
