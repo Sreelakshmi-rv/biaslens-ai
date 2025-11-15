@@ -3,6 +3,7 @@ import pandas as pd
 import sys
 import os
 
+api_key = st.secrets["GROQ_API_KEY"]
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Add project root to path
