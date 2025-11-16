@@ -126,7 +126,7 @@ class BiasLensApp:
                 st.write("**Columns:**", list(df.columns))
                 
                 # Data preview
-                with st.expander("👀 Data Preview (First 10 rows)"):
+                with st.expander("Data Preview (First 10 rows)"):
                     st.dataframe(df.head(10), width='stretch')
                 
                 # Run Data Profiler Agent
