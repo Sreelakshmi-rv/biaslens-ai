@@ -9,6 +9,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 # Add project root to path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
+from agents.report_generator import ReportGenerationAgent
 from agents import DataProfilerAgent, DataCleaningAgent, BiasDetectionAgent, ReportGenerationAgent, ConversationalAgent
 import config
 
