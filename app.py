@@ -56,29 +56,7 @@ class BiasLensApp:
                 st.session_state[key] = value
     
     def render_sidebar(self):
-        """Render sidebar with progress and info"""
-        with st.sidebar:
-            st.header("Analysis Progress")
-            
-            steps = [
-                "1. Data Upload & Profiling",
-                "2. Data Cleaning", 
-                "3. Bias Analysis",
-                "4. Report Generation",
-                "5. Interactive Q&A"
-            ]
-            
-            current_step = st.session_state.get('current_step', 1)
-            
-            for i, step in enumerate(steps, 1):
-                if i == current_step:
-                    st.markdown(f"**▶️ {step}**")
-                elif i < current_step:
-                    st.markdown(f"✅ {step}")
-                else:
-                    st.markdown(f"⏸️ {step}")
-            
-            st.divider()
+    
             st.markdown("### About BiasLens")
             st.markdown("""
             An agentic AI system that:
