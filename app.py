@@ -56,8 +56,8 @@ class BiasLensApp:
                 st.session_state[key] = value
     
     def render_sidebar(self):
-    
-            st.markdown("### About BiasLens")
+        with st.sidebar:
+            st.header("About BiasLens")
             st.markdown("""
             An agentic AI system that:
             -  Uses 5 specialized agents
