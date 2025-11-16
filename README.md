@@ -2,7 +2,7 @@
 
 ## Agentic AI-Powered Fairness Analysis Platform
 
-BiasLens 2.0 is an advanced fairness analysis tool that uses a multi-agent AI system to automatically detect, analyze, and explain bias in machine learning models.
+BiasLens is an advanced fairness analysis tool that uses a multi-agent AI system to automatically detect, analyze, and explain bias in machine learning models.
 
 ### Features
 
