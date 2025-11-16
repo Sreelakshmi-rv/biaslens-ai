@@ -13,12 +13,6 @@ BiasLens 2.0 is an advanced fairness analysis tool that uses a multi-agent AI sy
 -  **Natural Language Q&A**
 -  **Multi-level Reports** (Technical, Business, Simple)
 
-### Installation
-
-1. Clone this repository
-2. Install dependencies: `pip install -r requirements.txt`
-3. Set up your `.env` file with Gemini API key
-4. Run: `streamlit run app.py`
 
 ### Agent Architecture
 
