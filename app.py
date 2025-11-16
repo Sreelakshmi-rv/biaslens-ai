@@ -195,7 +195,7 @@ class BiasLensApp:
                 st.metric("Missing Values", basic_info['total_missing_values'])
         
         # Data Types
-        with st.expander("🔧 Data Types Analysis"):
+        with st.expander("Data Types Analysis"):
             data_types = profile['data_types']
             col1, col2 = st.columns(2)
             with col1:
@@ -321,8 +321,8 @@ class BiasLensApp:
                 help="The column to check for bias (e.g., gender, race, age)"
             )
         
-        if st.button("🔍 Run Bias Analysis", type="primary"):
-            with st.spinner("🤖 Bias Detection Agent is analyzing fairness across models..."):
+        if st.button("Run Bias Analysis", type="primary"):
+            with st.spinner("Bias Detection Agent is analyzing fairness across models..."):
                 detector_agent = st.session_state.agents['detector']
                 analysis_result = detector_agent.execute(
                     data_context={
@@ -345,7 +345,7 @@ class BiasLensApp:
         
         # Display existing results if available
         if 'analysis_result' in st.session_state and st.session_state.analysis_result['success']:
-            st.subheader("📈 Analysis Results")
+            st.subheader("Analysis Results")
             
             result = st.session_state.analysis_result
             
@@ -589,10 +589,10 @@ class BiasLensApp:
         col1, col2 = st.columns([1, 4])
         
         with col1:
-            ask_clicked = st.button("🚀 Ask", type="primary", key="ask_button")
+            ask_clicked = st.button("Ask", type="primary", key="ask_button")
         
         with col2:
-            clear_clicked = st.button("🗑️ Clear Chat", key="clear_button")
+            clear_clicked = st.button("Clear Chat", key="clear_button")
         
         # Handle ask button click
         if ask_clicked and user_question:
