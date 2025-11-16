@@ -1,4 +1,4 @@
-# BiasLens 2.0 🔍
+# BiasLens
 
 ## Agentic AI-Powered Fairness Analysis Platform
 
@@ -6,12 +6,12 @@ BiasLens 2.0 is an advanced fairness analysis tool that uses a multi-agent AI sy
 
 ### Features
 
-- 🤖 **5 Specialized AI Agents** for different analysis stages
-- 📊 **Automated Data Profiling & Cleaning**
-- ⚖️ **Comprehensive Fairness Metrics**
-- 📈 **Interactive Visualizations** 
-- 💬 **Natural Language Q&A**
-- 📋 **Multi-level Reports** (Technical, Business, Simple)
+-  **5 Specialized AI Agents** for different analysis stages
+-  **Automated Data Profiling & Cleaning**
+-  **Comprehensive Fairness Metrics**
+-  **Interactive Visualizations** 
+-  **Natural Language Q&A**
+-  **Multi-level Reports** (Technical, Business, Simple)
 
 ### Installation
 
