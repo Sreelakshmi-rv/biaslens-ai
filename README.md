@@ -9,7 +9,6 @@ BiasLens is an advanced fairness analysis tool that uses a multi-agent AI system
 -  **5 Specialized AI Agents** for different analysis stages
 -  **Automated Data Profiling & Cleaning**
 -  **Comprehensive Fairness Metrics**
--  **Interactive Visualizations** 
 -  **Natural Language Q&A**
 -  **Multi-level Reports** (Technical, Business, Simple)
 
