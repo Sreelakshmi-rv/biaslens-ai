@@ -2,7 +2,7 @@
 
 ## Agentic AI-Powered Fairness Analysis Platform
 
-BiasLens is an advanced fairness analysis tool that uses a multi-agent AI system to automatically detect, analyze, and explain bias in machine learning models.
+BiasLens is a lightweight, modular fairness analysis system that uses a multi-agent AI architecture to evaluate and explain bias in machine learning models. It automates dataset profiling, preprocessing, model evaluation, fairness metric computation, and natural-language interpretation through Generative AI.
 
 ### Features
 
@@ -20,3 +20,24 @@ BiasLens is an advanced fairness analysis tool that uses a multi-agent AI system
 3. **Bias Detection Agent** - Runs models & computes fairness
 4. **Report Generation Agent** - Creates insights & explanations
 5. **Conversational Agent** - Answers questions naturally
+
+### Project Structure
+
+BiasLens/
+├── agents/
+├── models/
+├── utils/
+├── screenshots/
+├── app.py
+└── requirements.txt
+
+### Future Enhancements
+
+- Bias mitigation algorithms
+- Multi-class & regression fairness support
+- Cloud deployment (AWS/GCP)
+- Visual dashboards for fairness comparisons
+
+Cloud deployment (AWS/GCP)
+
+Visual dashboards for fairness comparisons
