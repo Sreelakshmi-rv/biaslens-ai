@@ -21,15 +21,6 @@ BiasLens is a lightweight, modular fairness analysis system that uses a multi-ag
 4. **Report Generation Agent** - Creates insights & explanations
 5. **Conversational Agent** - Answers questions naturally
 
-### Project Structure
-
-BiasLens/
-├── agents/
-├── models/
-├── utils/
-├── screenshots/
-├── app.py
-└── requirements.txt
 
 ### Future Enhancements
 
@@ -38,6 +29,5 @@ BiasLens/
 - Cloud deployment (AWS/GCP)
 - Visual dashboards for fairness comparisons
 
-Cloud deployment (AWS/GCP)
-
-Visual dashboards for fairness comparisons
+### Live demo:
+https://biaslens-ai-srv.streamlit.app/
