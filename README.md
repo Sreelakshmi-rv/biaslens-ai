@@ -125,7 +125,3 @@ Then:
 ```bash
 streamlit run app.py
 ```
-
-## Author
-
-Sreelakshmi R V — MSc Data Analytics and Computational Science, Digital University Kerala
