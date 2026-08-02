@@ -1,113 +1,102 @@
+"""
+utils/fairness_metrics.py — rebuilt
+
+Fixes W7: privileged/unprivileged group is no longer implicit.
+Rule: privileged = majority class (highest count) in the sensitive column,
+computed on the TEST split actually used, not global data. Rule is stored
+on the object so it can be reported to the user, not silently applied.
+"""
 import numpy as np
 import pandas as pd
-from sklearn.metrics import accuracy_score, confusion_matrix
+
 
 class FairnessCalculator:
-    """Calculate various fairness metrics for model evaluation"""
-    
-    def __init__(self):
-        self.metrics = {}
-    
-    def calculate_all_metrics(self, y_true, y_pred, sensitive_attr):
-        """Calculate all fairness metrics"""
-        privileged_group = 1  # Assuming binary sensitive attribute where 1 is privileged
-        unprivileged_group = 0
-        
-        metrics = {
-            'accuracy': accuracy_score(y_true, y_pred),
-            'disparate_impact': self.disparate_impact(y_pred, sensitive_attr, unprivileged_group, privileged_group),
-            'statistical_parity_difference': self.statistical_parity_difference(y_pred, sensitive_attr, unprivileged_group, privileged_group),
-            'equal_opportunity_difference': self.equal_opportunity_difference(y_true, y_pred, sensitive_attr, unprivileged_group, privileged_group),
-            'average_odds_difference': self.average_odds_difference(y_true, y_pred, sensitive_attr, unprivileged_group, privileged_group),
-            'theil_index': self.theil_index(y_pred, sensitive_attr)
+    def __init__(self, privileged_group=None):
+        """
+        privileged_group: value to treat as privileged. If None, defaults to
+        majority class in sensitive_attr at calculate time (documented, not hidden).
+        """
+        self.privileged_group = privileged_group
+        self.last_group_assignment = None  # audit trail
+
+    def _resolve_groups(self, sensitive_attr: pd.Series):
+        if self.privileged_group is not None:
+            priv_val = self.privileged_group
+            rule = "user_specified"
+        else:
+            priv_val = sensitive_attr.value_counts().idxmax()
+            rule = "majority_class"
+
+        priv_mask = sensitive_attr == priv_val
+        unpriv_mask = ~priv_mask
+
+        self.last_group_assignment = {
+            'rule': rule,
+            'privileged_value': priv_val,
+            'privileged_n': int(priv_mask.sum()),
+            'unprivileged_n': int(unpriv_mask.sum()),
         }
-        
-        return metrics
-    
-    def disparate_impact(self, y_pred, sensitive_attr, unprivileged_group, privileged_group):
-        """Calculate disparate impact ratio"""
-        unprivileged_rate = np.mean(y_pred[sensitive_attr == unprivileged_group])
-        privileged_rate = np.mean(y_pred[sensitive_attr == privileged_group])
-        
-        if privileged_rate == 0:
-            return float('inf')
-        
-        return unprivileged_rate / privileged_rate
-    
-    def statistical_parity_difference(self, y_pred, sensitive_attr, unprivileged_group, privileged_group):
-        """Calculate statistical parity difference"""
-        unprivileged_rate = np.mean(y_pred[sensitive_attr == unprivileged_group])
-        privileged_rate = np.mean(y_pred[sensitive_attr == privileged_group])
-        
-        return unprivileged_rate - privileged_rate
-    
-    def equal_opportunity_difference(self, y_true, y_pred, sensitive_attr, unprivileged_group, privileged_group):
-        """Calculate equal opportunity difference (TPR difference)"""
-        # True positive rates
-        tpr_unprivileged = self.true_positive_rate(y_true, y_pred, sensitive_attr == unprivileged_group)
-        tpr_privileged = self.true_positive_rate(y_true, y_pred, sensitive_attr == privileged_group)
-        
-        return tpr_unprivileged - tpr_privileged
-    
-    def average_odds_difference(self, y_true, y_pred, sensitive_attr, unprivileged_group, privileged_group):
-        """Calculate average odds difference"""
-        # True positive rate difference
-        tpr_diff = self.equal_opportunity_difference(y_true, y_pred, sensitive_attr, unprivileged_group, privileged_group)
-        
-        # False positive rate difference
-        fpr_unprivileged = self.false_positive_rate(y_true, y_pred, sensitive_attr == unprivileged_group)
-        fpr_privileged = self.false_positive_rate(y_true, y_pred, sensitive_attr == privileged_group)
-        fpr_diff = fpr_unprivileged - fpr_privileged
-        
-        return (tpr_diff + fpr_diff) / 2
-    
-    def theil_index(self, y_pred, sensitive_attr):
-        """Calculate Theil index for inequality measurement"""
-        group_means = []
-        for group in np.unique(sensitive_attr):
-            group_pred = y_pred[sensitive_attr == group]
-            if len(group_pred) > 0:
-                group_means.append(np.mean(group_pred))
-        
-        if len(group_means) == 0:
-            return 0
-        
-        overall_mean = np.mean(group_means)
-        if overall_mean == 0:
-            return 0
-        
-        # Calculate Theil index
-        theil = 0
-        for mean in group_means:
-            if mean > 0:
-                theil += (mean / overall_mean) * np.log(mean / overall_mean)
-        
-        return theil / len(group_means)
-    
-    def true_positive_rate(self, y_true, y_pred, mask):
-        """Calculate true positive rate for a subgroup"""
-        if np.sum(mask) == 0:
-            return 0
-        
-        y_true_sub = y_true[mask]
-        y_pred_sub = y_pred[mask]
-        
-        if len(y_true_sub) == 0:
-            return 0
-        
-        tn, fp, fn, tp = confusion_matrix(y_true_sub, y_pred_sub).ravel()
-        return tp / (tp + fn) if (tp + fn) > 0 else 0
-    
-    def false_positive_rate(self, y_true, y_pred, mask):
-        """Calculate false positive rate for a subgroup"""
-        if np.sum(mask) == 0:
-            return 0
-        
-        y_true_sub = y_true[mask]
-        y_pred_sub = y_pred[mask]
-        
-        if len(y_true_sub) == 0:
-            return 0
-        
-        tn, fp, fn, tp = confusion_matrix(y_true_sub, y_pred_sub).ravel()
-        return fp / (fp + tn) if (fp + tn) > 0 else 0
+        return priv_mask, unpriv_mask
+
+    def calculate_all_metrics(self, y_true, y_pred, sensitive_attr):
+        y_true = pd.Series(np.asarray(y_true)).reset_index(drop=True)
+        y_pred = pd.Series(np.asarray(y_pred)).reset_index(drop=True)
+        sensitive_attr = pd.Series(np.asarray(sensitive_attr)).reset_index(drop=True)
+
+        priv_mask, unpriv_mask = self._resolve_groups(sensitive_attr)
+
+        if priv_mask.sum() == 0 or unpriv_mask.sum() == 0:
+            raise ValueError(
+                "Sensitive attribute has only one group in this split — "
+                "cannot compute group fairness metrics."
+            )
+
+        accuracy = (y_true == y_pred).mean()
+
+        # Positive prediction rates per group
+        p_priv = y_pred[priv_mask].mean()
+        p_unpriv = y_pred[unpriv_mask].mean()
+
+        disparate_impact = (p_unpriv / p_priv) if p_priv > 0 else np.nan
+        statistical_parity_difference = p_unpriv - p_priv
+
+        # True positive rate (recall) per group — needs actual positives present
+        def tpr(mask):
+            actual_pos = (y_true[mask] == 1)
+            if actual_pos.sum() == 0:
+                return np.nan
+            return (y_pred[mask][actual_pos] == 1).mean()
+
+        def fpr(mask):
+            actual_neg = (y_true[mask] == 0)
+            if actual_neg.sum() == 0:
+                return np.nan
+            return (y_pred[mask][actual_neg] == 1).mean()
+
+        tpr_priv, tpr_unpriv = tpr(priv_mask), tpr(unpriv_mask)
+        fpr_priv, fpr_unpriv = fpr(priv_mask), fpr(unpriv_mask)
+
+        equal_opportunity_difference = tpr_unpriv - tpr_priv
+        average_odds_difference = 0.5 * ((fpr_unpriv - fpr_priv) + (tpr_unpriv - tpr_priv))
+
+        theil_index = self._theil_index(y_pred)
+
+        return {
+            'accuracy': float(accuracy),
+            'disparate_impact': float(disparate_impact) if not np.isnan(disparate_impact) else None,
+            'statistical_parity_difference': float(statistical_parity_difference),
+            'equal_opportunity_difference': float(equal_opportunity_difference) if not np.isnan(equal_opportunity_difference) else None,
+            'average_odds_difference': float(average_odds_difference) if not (np.isnan(fpr_priv) or np.isnan(fpr_unpriv) or np.isnan(tpr_priv) or np.isnan(tpr_unpriv)) else None,
+            'theil_index': float(theil_index),
+            'group_assignment': self.last_group_assignment,  # audit trail, W7 fix
+        }
+
+    @staticmethod
+    def _theil_index(y_pred):
+        b = np.asarray(y_pred, dtype=float) + 1.0  # shift to avoid log(0)
+        mean_b = b.mean()
+        if mean_b == 0:
+            return 0.0
+        ratio = b / mean_b
+        ratio = np.where(ratio == 0, 1e-10, ratio)
+        return float(np.mean(ratio * np.log(ratio)))
