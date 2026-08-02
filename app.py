@@ -1,3 +1,5 @@
+#app.py:
+
 import streamlit as st
 import pandas as pd
 import sys
@@ -126,7 +128,7 @@ class BiasLensApp:
                 
                 # Data preview
                 with st.expander("Data Preview (First 10 rows)"):
-                    st.dataframe(df.head(10), width='stretch')
+                    st.dataframe(df.head(10), use_container_width=True)
                 
                 # Run Data Profiler Agent
                 if st.button("Run Data Profiling", type="primary"):
@@ -255,7 +257,7 @@ class BiasLensApp:
                 
                 # Show cleaned data preview
                 with st.expander("Preview Cleaned Data"):
-                    st.dataframe(st.session_state.cleaned_data.head(10), width='stretch')
+                    st.dataframe(st.session_state.cleaned_data.head(10), use_container_width=True)
                 
                 st.session_state.current_step = 3
                 st.success("Ready for bias analysis! Move to the 'Bias Analysis' tab.")
@@ -341,6 +343,14 @@ class BiasLensApp:
                 st.error("**Significant bias detected** in the models")
             else:
                 st.success("**No significant bias detected**")
+
+            # Transparency: show what the pipeline did automatically
+            dropped_id_cols = result.get('dropped_id_like_features', [])
+            if dropped_id_cols:
+                st.info(f"Auto-excluded ID-like feature column(s) (near-unique per row): {', '.join(dropped_id_cols)}")
+            binarization_note = result.get('binarization_note')
+            if binarization_note:
+                st.caption(f"Target handling: {binarization_note}")
             
             # Show model performance comparison
             st.subheader("Model Performance Comparison")
@@ -357,12 +367,14 @@ class BiasLensApp:
                         'Accuracy': f"{metrics.get('accuracy', 0):.3f}",
                         'Disparate Impact': f"{metrics.get('disparate_impact', 0):.3f}",
                         'Statistical Parity Diff': f"{metrics.get('statistical_parity_difference', 0):.3f}",
-                        'Equal Opportunity Diff': f"{metrics.get('equal_opportunity_difference', 0):.3f}"
+                        'Equal Opportunity Diff': f"{metrics.get('equal_opportunity_difference', 0):.3f}",
+                        'Average Odds Diff': f"{metrics.get('average_odds_difference', 0):.3f}",
+                        'Theil Index': f"{metrics.get('theil_index', 0):.3f}"
                     })
                 
                 if comparison_data:
                     comparison_df = pd.DataFrame(comparison_data)
-                    st.dataframe(comparison_df, width='stretch')
+                    st.dataframe(comparison_df, use_container_width=True)
             
             # Show AI Insights
             if 'ai_insights' in result:
@@ -376,7 +388,7 @@ class BiasLensApp:
                         st.write(f"### {model_name.replace('_', ' ').title()}")
                         metrics = model_data.get('fairness_metrics', {})
                         
-                        col1, col2, col3, col4 = st.columns(4)
+                        col1, col2, col3, col4, col5, col6 = st.columns(6)
                         with col1:
                             st.metric("Accuracy", f"{metrics.get('accuracy', 0):.3f}")
                         with col2:
@@ -385,6 +397,10 @@ class BiasLensApp:
                             st.metric("Stat Parity Diff", f"{metrics.get('statistical_parity_difference', 0):.3f}")
                         with col4:
                             st.metric("Equal Opp Diff", f"{metrics.get('equal_opportunity_difference', 0):.3f}")
+                        with col5:
+                            st.metric("Avg Odds Diff", f"{metrics.get('average_odds_difference', 0):.3f}")
+                        with col6:
+                            st.metric("Theil Index", f"{metrics.get('theil_index', 0):.3f}")
                         
                         st.divider()
             st.success(" Bias analysis completed! Move to the 'Reports' tab to generate comprehensive fairness reports.")
